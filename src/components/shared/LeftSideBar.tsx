@@ -20,12 +20,9 @@ const LeftSideBar = () => {
     <nav className=" hidden md:flex px-6 py-10 flex-col justify-between min-w-[270px] bg-[#09090A]">
       <div className=" flex flex-col gap-11 ">
         <Link to="/" className="flex gap-3 items-center">
-          <img
-            src="/assets/images/logo.svg"
-            alt="logo"
-            width={170}
-            height={36}
-          />
+          <span className="text-[30px] font-bold leading-[140%] tracking-wider ml-8 ">
+            TriVerse
+          </span>
         </Link>
         <Link to={`/profile/${user.id}`} className="flex items-center gap-3">
           <img
