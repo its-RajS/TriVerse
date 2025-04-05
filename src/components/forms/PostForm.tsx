@@ -19,10 +19,22 @@ import { Models } from "appwrite";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { useCreatePost } from "@/lib/react_query/queriesAndMutation";
+import {
+  useCreatePost,
+  useUpdatePost,
+} from "@/lib/react_query/queriesAndMutation";
 
-const PostForm = ({ post }: { post?: Models.Document }) => {
-  const { mutateAsync: createPost } = useCreatePost();
+const PostForm = ({
+  post,
+  action,
+}: {
+  post?: Models.Document;
+  action?: "Create" | "Update";
+}) => {
+  const { mutateAsync: createPost, isPending: isLoadingCreate } =
+    useCreatePost();
+  const { mutateAsync: updatePost, isPending: isLoadingUpdate } =
+    useUpdatePost();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -39,6 +51,19 @@ const PostForm = ({ post }: { post?: Models.Document }) => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof PostValidation>) {
+    if (post && action === "Update") {
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.$id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl,
+      });
+
+      if (!updatedPost) toast("Please try again");
+
+      return navigate(`/post/${post.$id}`);
+    }
+
     const newPost = await createPost({
       ...values,
       userId: user.id,
@@ -82,7 +107,7 @@ const PostForm = ({ post }: { post?: Models.Document }) => {
               <FormControl>
                 <FileUploader
                   fieldChange={field.onChange}
-                  mediaUrl={post?.imgUrl}
+                  mediaUrl={post?.imageUrl}
                 />
               </FormControl>
               <FormMessage className="text-red !important" />
@@ -139,8 +164,10 @@ const PostForm = ({ post }: { post?: Models.Document }) => {
           <Button
             type="submit"
             className=" bg-[#877EFF] p-5 hover:bg-[#877EFF] text-[#FFFFFF] flex gap-2 !important"
+            disabled={isLoadingCreate || isLoadingUpdate}
           >
-            Submit
+            {isLoadingCreate || (isLoadingUpdate && "Loading...")}
+            {action} Post
           </Button>
         </div>
       </form>

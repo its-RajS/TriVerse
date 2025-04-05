@@ -26,7 +26,7 @@ const LeftSideBar = () => {
         </Link>
         <Link to={`/profile/${user.id}`} className="flex items-center gap-3">
           <img
-            src={user.imgUrl}
+            src={user.imageUrl}
             alt="profile"
             className="h-14 w-14 rounded-full"
           />
@@ -55,7 +55,7 @@ const LeftSideBar = () => {
                   className=" flex items-center p-4 gap-4 "
                 >
                   <img
-                    src={link.imgURL}
+                    src={link.imageUrl}
                     alt={link.label}
                     className={`group-hover:invert brightness-0 transition ${
                       isActive && "invert brightness-0 transition"

@@ -9,7 +9,7 @@ export const Initial_User = {
   name: "",
   email: "",
   username: "",
-  imgUrl: "",
+  imageUrl: "",
   bio: "",
 };
 
@@ -42,7 +42,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           id: currentUser.$id,
           name: currentUser.name,
           email: currentUser.email,
-          imgUrl: currentUser.imgUrl,
+          imageUrl: currentUser.imageUrl,
           username: currentUser.username,
           bio: currentUser.bio,
         });

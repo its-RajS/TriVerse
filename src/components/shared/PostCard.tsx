@@ -17,13 +17,15 @@ const PostCard = ({ post }: PostCardProps) => {
   //means somethig went wrong
   if (!post.creator) return;
 
+  // console.log("Img Url: ", post?.imageUrl);
+
   return (
     <div className="bg-[#09090A] rounded-3xl border border-[#1F1F22] p-5 lg:p-7 w-full max-w-screen">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.creator.$id}`} className="cursor-pointer">
             <img
-              src={post?.creator?.imgUrl}
+              src={post?.creator?.imageUrl}
               alt="creator"
               className="rounded-full w-12 lg:h-12 "
             />
@@ -61,7 +63,7 @@ const PostCard = ({ post }: PostCardProps) => {
           </ul>
         </div>
         <img
-          src={post?.imgUrl || "/assets/icons/profile-placeholder.svg"}
+          src={post?.imageUrl || "/assets/icons/profile-placeholder.svg"}
           alt="post img"
           className="h-64 xs:h-[400px] lg:h-[450px] w-full rounded-[24px] object-cover mb-5"
         />

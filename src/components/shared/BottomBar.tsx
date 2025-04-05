@@ -18,7 +18,7 @@ const BottomBar = () => {
               }  flex justify-center items-center flex-col w-full p-2 gap-1 transition `}
           >
             <img
-              src={link.imgURL}
+              src={link.imageUrl}
               alt={link.label}
               width={18}
               height={18}

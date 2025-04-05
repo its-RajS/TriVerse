@@ -38,7 +38,7 @@ const TopBar = () => {
             className="flex justify-items-center gap-3"
           >
             <img
-              src={user.imgUrl}
+              src={user.imageUrl}
               alt="profile"
               className="h-8 w-8 rounded-full"
             />
