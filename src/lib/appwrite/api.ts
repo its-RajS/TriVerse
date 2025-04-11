@@ -107,8 +107,8 @@ export async function createPost(post: INewPost) {
     if (!uploadedFile) throw Error;
 
     // Get file url
-    const fileUrl = getFilePreview(uploadedFile.$id);
-    // console.log("File Url: ", fileUrl);
+    const fileUrl = getFilePreview(uploadedFile.$id)?.toString();
+    console.log("File Url: ", fileUrl);
 
     //something was corrupted
     if (!fileUrl) {
@@ -127,7 +127,7 @@ export async function createPost(post: INewPost) {
       {
         creator: post.userId,
         caption: post.caption,
-        imageUrl: new URL(fileUrl),
+        imageUrl: fileUrl, //store as string
         imageId: uploadedFile.$id || "",
         location: post.location || "",
         tags: tags.length > 0 ? tags : [],
@@ -141,7 +141,8 @@ export async function createPost(post: INewPost) {
 
     return newPost;
   } catch (error) {
-    console.log(error);
+    console.error("Create Post Error:", error);
+    throw error;
   }
 }
 
@@ -164,14 +165,12 @@ export async function uploadFile(file: File[]) {
 // ============================== GET FILE URL
 export function getFilePreview(fileId: string) {
   try {
-    const fileUrl = storage.getFilePreview(
-      appwriteConfig.storageID,
-      fileId,
-      2000,
-      2000
-    );
+    const fileUrl = storage
+      .getFilePreview(appwriteConfig.storageID, fileId, 2000, 2000)
+      .toString();
 
-    if (!fileUrl) throw Error;
+    if (!fileUrl) throw new Error("File URL generation failed");
+    console.log("Generated Download URL:", fileUrl); // Debug the URL
 
     return fileUrl;
   } catch (error) {
@@ -275,11 +274,11 @@ export async function getPostDetails(postId: string) {
 
 export async function updatePost(post: IUpdatePost) {
   //check if the user is updating the content or just the image
-  const hasFileUpdate = post?.file.length > 0;
+  const hasFileUpdate = post?.file && post.file.length > 0;
   try {
     let image = {
-      imageUrl: post?.imageUrl,
-      imageId: post?.imageId,
+      imageUrl: post?.imageUrl || "",
+      imageId: post?.imageId || "",
     };
 
     if (hasFileUpdate) {
@@ -288,7 +287,7 @@ export async function updatePost(post: IUpdatePost) {
       if (!uploadedFile) throw Error;
 
       // Get file url
-      const fileUrl = getFilePreview(uploadedFile.$id);
+      const fileUrl = getFilePreview(uploadedFile.$id)?.toString();
 
       //something was corrupted
       if (!fileUrl) {
@@ -298,7 +297,7 @@ export async function updatePost(post: IUpdatePost) {
 
       image = {
         ...image,
-        imageUrl: new URL(fileUrl),
+        imageUrl: fileUrl,
         imageId: uploadedFile.$id,
       };
     }
@@ -315,8 +314,8 @@ export async function updatePost(post: IUpdatePost) {
         caption: post.caption,
         imageUrl: image.imageUrl,
         imageId: image.imageId,
-        location: post.location,
-        tags: tags.length > 0,
+        location: post.location || "",
+        tags: tags.length > 0 ? tags : [], //pass the tags array
       }
     );
 
@@ -342,6 +341,44 @@ export async function deletePost(postId: string, imageId: string) {
     );
 
     return { status: "ok" };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getInfinitePosts({ pageParams }: { pageParams: number }) {
+  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+
+  if (pageParams) {
+    queries.push(Query.offset(pageParams * 10)); // offset is used to get the next 10 posts
+  }
+
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.postCollectionID,
+      queries
+    );
+
+    if (!posts) throw Error;
+
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getSearchPosts(searchTerm: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.postCollectionID,
+      [Query.search("caption", searchTerm)]
+    );
+
+    if (!posts) throw Error;
+
+    return posts;
   } catch (error) {
     console.log(error);
   }

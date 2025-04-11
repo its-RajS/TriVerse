@@ -12,10 +12,10 @@ const PostCard = ({ post }: PostCardProps) => {
   //use the context to know if its the user post
   const { user } = useUserContext();
 
-  console.log(post);
+  console.log("Post IMage URL:", post?.imageUrl);
 
   //means somethig went wrong
-  if (!post.creator) return;
+  if (!post.creator) return null;
 
   // console.log("Img Url: ", post?.imageUrl);
 
@@ -55,8 +55,8 @@ const PostCard = ({ post }: PostCardProps) => {
         <div className="text-[14px] font-medium leading-[140%] lg:text-[16px] py-5">
           <p>{post?.caption} </p>
           <ul className="flex gap-1 mt-2">
-            {post?.tags?.map((tag: string) => (
-              <li key={Math.random()} className="text-[#7878A3] ">
+            {post?.tags?.map((tag: string, index: number) => (
+              <li key={index} className="text-[#7878A3] ">
                 #{tag}
               </li>
             ))}
@@ -66,6 +66,7 @@ const PostCard = ({ post }: PostCardProps) => {
           src={post?.imageUrl || "/assets/icons/profile-placeholder.svg"}
           alt="post img"
           className="h-64 xs:h-[400px] lg:h-[450px] w-full rounded-[24px] object-cover mb-5"
+          onError={(e) => console.log("Image load error:", e)} // Debug load failures
         />
       </Link>
 

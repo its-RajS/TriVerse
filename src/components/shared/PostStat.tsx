@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
 
 type PostStatProps = {
-  post: Models.Document;
+  post?: Models.Document;
   userId: string;
 };
 
@@ -30,7 +30,7 @@ const PostStat = ({ post, userId }: PostStatProps) => {
 
   //check if the user has saved the post
   const savedRecord = currentUser?.save.find(
-    (record: Models.Document) => record.post.$id === post.$id
+    (record: Models.Document) => record.post.$id === post?.$id
   );
 
   //changes the state of the post based on user 's action
@@ -58,7 +58,7 @@ const PostStat = ({ post, userId }: PostStatProps) => {
     //update the state of likes
     setLikes(newLikes);
     //update the attribute in teh backend/ appwrite
-    likePost({ postId: post.$id, likedArray: newLikes });
+    likePost({ postId: post?.$id || "", likedArray: newLikes });
   };
 
   //function to save a post
@@ -69,7 +69,7 @@ const PostStat = ({ post, userId }: PostStatProps) => {
       setIsSaved(false);
       deleteSavePost(savedRecord.$id);
     } else {
-      savePost({ postId: post.$id, userId: userId });
+      savePost({ postId: post?.$id || "", userId: userId });
       setIsSaved(true);
     }
   };

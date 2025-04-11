@@ -59,7 +59,9 @@ const PostForm = ({
         imageUrl: post?.imageUrl,
       });
 
-      if (!updatedPost) toast("Please try again");
+      if (!updatedPost) toast("Failed to update post");
+
+      toast.success("Post updated successfully");
 
       return navigate(`/post/${post.$id}`);
     }
@@ -70,7 +72,7 @@ const PostForm = ({
     });
 
     if (!newPost) return toast("Post Not Created");
-
+    if (newPost) toast.success("Post created successfully");
     navigate("/");
   }
 

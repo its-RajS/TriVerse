@@ -1,3 +1,5 @@
+import { Models } from "appwrite";
+
 export type INavLink = {
   imageUrl: string;
   route: string;
@@ -24,9 +26,9 @@ export type INewPost = {
 export type IUpdatePost = {
   postId: string;
   caption: string;
-  imageId: string;
-  imageUrl: URL;
   file: File[];
+  imageId: string;
+  imageUrl?: URL;
   location?: string;
   tags?: string;
 };
@@ -54,4 +56,10 @@ export type IContextType = {
   isAuthenticated: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   checkAuthUser: () => Promise<boolean>;
+};
+
+export type GridPostListType = {
+  posts?: Models.Document[];
+  showUser?: boolean;
+  showStats?: boolean;
 };
